@@ -1,0 +1,7 @@
+POST http://localhost:3333/v1/uploads
+content-type: application/json
+
+{
+  "name": "file.mp4",
+  "contentType": "video/mp4"
+}
