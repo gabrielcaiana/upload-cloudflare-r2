@@ -1,18 +1,20 @@
-import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { env } from 'process';
+import Fastify, { FastifyInstance } from 'fastify';
+import cors from '@fastify/cors'
 
-const fastify: FastifyInstance = Fastify({ logger: true });
+import { uploadsRoute } from '@/routes/v1/uploads.ts';
 
-fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-  reply.send({ hello: 'world' });
-});
+const server: FastifyInstance = Fastify({ logger: true });
+
+server.register(uploadsRoute, { prefix: '/v1'});
+server.register(cors, { origin: '*' })
 
 const startServer = async () => {
   try {
-    await fastify.listen(3333);
-    console.log('Server is running 🔥');
+    await server.listen(3333)
+
+    console.log(`Server is running 🚀`)
   } catch (err) {
-    fastify.log.error(err);
+    server.log.error(err);
     process.exit(1);
   }
 };

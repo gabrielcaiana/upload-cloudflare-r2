@@ -1,12 +1,13 @@
 import * as AWS from "@aws-sdk/client-s3";
+import { env } from "../env.ts";
 
-const client = new AWS.S3({ 
+const r2 = new AWS.S3({ 
   region: "auto",
-  endpoint: process.env.CLOUDFLARE_ENDPOINT,
+  endpoint: env.CLOUDFLARE_ENDPOINT,
   credentials: {
-    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY || ''
+    accessKeyId: env.CLOUDFLARE_ACCESS_KEY_ID || '',
+    secretAccessKey: env.CLOUDFLARE_SECRET_ACCESS_KEY || ''
   }
  });
 
-export { client }
+export { r2 }
