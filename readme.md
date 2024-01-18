@@ -1,6 +1,6 @@
 # Api to upload files with Cloudflare R2
 
-### Requisitos não funcionais (RNFs)
+### Non-functional requirements (RNFs)
 - [x] Using Cloudflare R2 to upload files
 - [x] Uploading must be done directly from the front-end using Presigned URLs
 - [x] Sharing links must be signed to prevent public access
