@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { env } from "@/env.ts";
@@ -32,7 +32,7 @@ export const uploadsRoute = (
       { expiresIn: 600 }
     )
 
-    await prisma.file.create({
+    const file = await prisma.file.create({
       data: {
         name,
         key: fileKey,
@@ -40,8 +40,36 @@ export const uploadsRoute = (
       }
     })
   
-    reply.code(200).send(signedURL)
+    reply.code(200).send({
+      signedURL,
+      fileId: file.id
+    })
   });
+
+  server.get('/uploads/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    const getFileParamsSchema = z.object({
+      id: z.string().cuid(),
+    })
+
+    const { id } = getFileParamsSchema.parse(request.params)
+
+    const file = await prisma.file.findUniqueOrThrow({
+      where: {
+        id,
+      }
+    })
+
+    const signedURL = await getSignedUrl(
+      r2,
+      new GetObjectCommand({
+        Bucket: env.CLOUDFLARE_BUCKET_NAME,
+        Key: file.key,
+      }),
+      { expiresIn: 600 }
+    )
+
+    return signedURL
+  })
 
   done()
 }
